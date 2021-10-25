@@ -18,15 +18,15 @@ class CaptchaImage:
         self.color = random.choice(colors)
 
     def choose_svg(self):
-        self.filename = random.choice(os.listdir("/home/ruffnorbert/codecool/projects/Balasys/backend/svgs"))
-        doc = minidom.parse("/home/ruffnorbert/codecool/projects/Balasys/backend/svgs/" + self.filename)
+        self.filename = random.choice(os.listdir("./svgs"))
+        doc = minidom.parse("./svgs/" + self.filename)
         path_strings = [path.getAttribute('d') for path
                         in doc.getElementsByTagName('path')]
         doc.unlink()
         self.svg_path = path_strings[0]
 
 
-captcha = CaptchaImage('red', 'iguana', "")
+captcha = CaptchaImage('red', 'instagram', "")
 
 
 @app.route('/')
@@ -39,8 +39,10 @@ def get_captcha_result():
     if request.method == 'POST':
         color_response = request.get_json()["color"]
         image_response = request.get_json()["image"]
-        print(captcha.filename)
-        print(captcha.color)
+        print(captcha.color, captcha.filename)
+        print(color_response, image_response)
+        print(captcha.filename.find(image_response) != -1 and captcha.color.find(color_response) != -1)
+
         if captcha.filename.find(image_response) != -1 and captcha.color.find(color_response) != -1:
             return jsonify({"response": "OK"})
         else:
